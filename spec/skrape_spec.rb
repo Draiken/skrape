@@ -14,7 +14,6 @@ describe Skrape do
       end
 
       scraper.should be_a Skrape::Scraper
-      scraper.selectors.size.should == 2
     end
   end
 
@@ -24,15 +23,17 @@ describe Skrape do
 
     describe "#sel" do
       it "should add a selector with a mapping" do
+
+        Skrape::Selector.should_receive(:new).twice
+
         scraper = Skrape.define do
           sel "h1", :title
           sel "ul.items > li", :items do
             sel "span.title", :title
           end
         end
-        selector = scraper.selectors.first
-        selector.selector.should == "h1"
-        selector.mapping.should == :title
+
+        scraper.selectors.size.should == 2
       end
     end
 
