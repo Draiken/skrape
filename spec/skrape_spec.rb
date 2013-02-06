@@ -72,14 +72,14 @@ describe Skrape do
         </html>"
         parsed_html = ::Nokogiri::HTML(html)
 
-        object = ::OpenStruct.new
-        scraper.scrape(parsed_html, object)
+        object = scraper.scrape(parsed_html)
 
-        object.title.should == "My title"
-        object.items.should be_a Array
-        object.items.count.should == 2
-        object.items.last.title.should == "Last title"
-        object.items.last.thing.one.should == "One"
+        object[:title].should == "My title"
+        object[:items].should be_a Array
+        object[:items].count.should == 2
+        item = object[:items].last
+        item[:title].should == "Last title"
+        item[:thing][:one].should == "One"
       end
     end
   end

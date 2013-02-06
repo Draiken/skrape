@@ -12,25 +12,47 @@ module Skrape
     class Selector
       attr_accessor :selector, :mapping
 
-      def initialize(selector, mapping, block)
+      def initialize(selector, mapping, options = {}, block = nil)
         @selector = selector
         @mapping = mapping
+        @options = options
         @scraper = Scraper.new(block) if block
       end
 
       def apply(html, object)
         selection = html.css(selector)
+        #if it's not the end of the chain
         if @scraper
-        scraped_obj = []
-        selection.each do |sel|
-            scraped_obj << @scraper.scrape(sel, ::OpenStruct.new)
-          end
-          object.send("#{mapping}=", scraped_obj.size == 1 ? scraped_obj.first : scraped_obj)
+          result = apply_inner_scraper(selection)
         else
-          object.send("#{mapping}=", selection.text)
+          result = selection.text
+          result.strip! if @options[:trim]
+        end
+
+        # if no mapping was given, sets directly to object
+        if mapping
+          object[mapping] = result
+        else
+          object = result
         end
         object
       end
+
+      private
+
+        def apply_inner_scraper(selection)
+          scraped_obj = []
+
+          # tries to apply sub-scrapers to each item found in the
+          # selection
+          selection.each do |sel|
+            scraped_obj << @scraper.scrape(sel)
+          end
+
+          # just trim out the result(s)
+          scraped_obj.size == 1 ? scraped_obj.first : scraped_obj
+
+        end
     end
 
     attr_accessor :selectors
@@ -42,17 +64,17 @@ module Skrape
       end
     end
 
-    def sel(selector, mapping, &block)
-      #block = @block if @block && block.nil?
-      selectors << Selector.new(selector, mapping, block)
+    def sel(selector, mapping = nil, options = {}, &block)
+      selectors << Selector.new(selector, mapping, options, block)
     end
 
-    def scrape(html, object)
+    def scrape(html, object = {})
       selectors.each do |sel|
         object = sel.apply(html, object)
       end
       object
     end
+
 
   end
 
