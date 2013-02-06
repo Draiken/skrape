@@ -1,16 +1,27 @@
 module Skrape
   class Selector
-    attr_accessor :selector, :mapping
+    attr_reader :selector, :mapping, :options, :scraper
 
-    def initialize(selector, mapping, options = {}, block = nil)
+    def initialize(selector, mapping = nil, options = {}, block_or_scraper = nil)
       @selector = selector
       @mapping = mapping
       @options = options
-      @scraper = Scraper.new(block) if block
+      if block_or_scraper
+        if block_or_scraper.is_a? Scraper
+          @scraper = block_or_scraper 
+        else
+          @scraper = Scraper.new(block_or_scraper) 
+        end
+      end
     end
 
     def apply(html, object)
+      puts "Applying selector #{selector} on #{html}"
       selection = html.css(selector)
+
+      # returns if nothing was found on the html
+      return nil unless selection
+
       #if it's not the end of the chain
       if @scraper
         result = apply_inner_scraper(selection)
@@ -37,6 +48,8 @@ module Skrape
       selection.each do |sel|
         scraped_obj << @scraper.scrape(sel)
       end
+
+      puts scraped_obj
 
       # just trim out the result(s)
       scraped_obj.size == 1 ? scraped_obj.first : scraped_obj
