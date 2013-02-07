@@ -8,15 +8,11 @@ development, and lots of changes might happen.
 
 Add this line to your application's Gemfile:
 
-    gem 'skrape'
+    gem 'skrape', git: 'https://github.com/Draiken/skrape.git'
 
 And then execute:
 
     $ bundle
-
-Or install it yourself as:
-
-    $ gem install skrape
 
 ## Usage
 
