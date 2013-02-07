@@ -64,5 +64,13 @@ describe Skrape::Scraper do
         item[:title].should == "Last title"
         item[:thing][:one].should == "One"
     end
+
+    context "when receiving pure text" do
+      it "should wrap it with nokogiri and work as usual" do
+        scraper = Skrape.define { sel "h1" }
+        html = "<h1>test</h1>"
+        scraper.scrape(html).should == "test"
+      end
+    end
   end
 end

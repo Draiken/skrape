@@ -16,7 +16,6 @@ module Skrape
     end
 
     def apply(html, object)
-      puts "Applying selector #{selector} on #{html}"
       selection = html.css(selector)
 
       # returns if nothing was found on the html
@@ -41,18 +40,16 @@ module Skrape
 
     private
 
-    def apply_inner_scraper(selection)
-      scraped_obj = []
-      # tries to apply sub-scrapers to each item found in the
-      # selection
-      selection.each do |sel|
-        scraped_obj << @scraper.scrape(sel)
+      def apply_inner_scraper(selection)
+        scraped_obj = []
+        # tries to apply sub-scrapers to each item found in the
+        # selection
+        selection.each do |sel|
+          scraped_obj << @scraper.scrape(sel)
+        end
+
+        # just trim out the result(s)
+        scraped_obj.size == 1 ? scraped_obj.first : scraped_obj
       end
-
-      puts scraped_obj
-
-      # just trim out the result(s)
-      scraped_obj.size == 1 ? scraped_obj.first : scraped_obj
-    end
   end
 end

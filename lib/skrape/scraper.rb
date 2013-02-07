@@ -14,6 +14,9 @@ module Skrape
     end
 
     def scrape(html, object = {})
+      if html.is_a? String
+        html = ::Nokogiri::HTML(html)
+      end
       selectors.each do |sel|
         object = sel.apply(html, object)
       end

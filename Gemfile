@@ -7,5 +7,5 @@ gem "nokogiri"
 
 group :development, :test do
   gem "rspec"
-  gem "debugger"
+  #gem "debugger"
 end
