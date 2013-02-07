@@ -40,11 +40,18 @@ describe Skrape::Selector do
       subject { Skrape::Selector.new("li", :lala, {}, nil) }
 
       it "should set the mapping on parent object with the result" do
-        pending "FINISH THIS!"
-        #object = {}
-        #object.should_receive("[]=").with(:lala, anything)
-        #subject.apply(html, object)
-        #object[:lala].should == "link 1link 2"
+        object = {}
+        object.should_receive("[]=").with(:lala, anything)
+        subject.apply(html, object)
+      end
+    end
+
+    context "without mapping" do
+      subject { Skrape::Selector.new("li", nil, {}, nil) }
+
+      it "should set the object with the result" do
+        obj = subject.apply(html, {})
+        obj.should == "link 1link 2"
       end
     end
   end
