@@ -17,8 +17,8 @@ describe Skrape::Selector do
     let(:html) { 
       ::Nokogiri::HTML("<html>
                           <ul>
-                            <li><a>link 1</a></li>
-                            <li><a>link 2</a></li>
+                            <li class=\"item\"><a>link 1</a></li>
+                            <li class=\"item\"><a>link 2</a></li>
                           </ul>
                         </html>") }
 
@@ -52,6 +52,15 @@ describe Skrape::Selector do
       it "should set the object with the result" do
         obj = subject.apply(html, {})
         obj.should == "link 1link 2"
+      end
+    end
+
+    context "with attr option" do
+      subject { Skrape::Selector.new("li", nil, {attr: :class}, nil) }
+
+      it "should select the item's given attribute" do
+        obj = subject.apply(html, {})
+        obj.should == "item"
       end
     end
   end

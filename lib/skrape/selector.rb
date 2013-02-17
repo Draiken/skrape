@@ -25,8 +25,12 @@ module Skrape
       if @scraper
         result = apply_inner_scraper(selection)
       else
-        result = selection.text
-        result.strip! if @options[:trim]
+        if @options[:attr]
+          result = selection.attr(@options[:attr].to_s).text
+        else
+          result = selection.text
+          result.strip! if @options[:trim]
+        end
       end
 
       # if no mapping was given, sets directly to object
